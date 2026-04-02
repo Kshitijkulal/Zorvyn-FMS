@@ -3,8 +3,10 @@ import * as userController from "./user.controller.js"
 
 import { validate } from "../../middlewares/validate.middleware.js"
 import {
+  createUserSchema,
   updateRoleSchema,
   updateStatusSchema,
+  updateUserEmailSchema,
   updateUserSchema
 } from "./user.validation.js"
 
@@ -19,6 +21,12 @@ router.use(authenticate, checkPermission(PERMISSIONS.MANAGE_USERS))
 
 // GET /users
 router.get("/", userController.getUsers)
+
+router.post(
+  "/",
+  validate(createUserSchema),
+  userController.createUser
+)
 
 // GET /users/:id
 router.get(
@@ -46,6 +54,12 @@ router.patch(
   "/:id/status",
   validate(updateStatusSchema),
   userController.updateStatus
+)
+
+router.patch(
+  "/:id/email",
+  validate(updateUserEmailSchema),
+  userController.updateUserEmail
 )
 
 // Users are not permanently deleted to preserve data integrity
