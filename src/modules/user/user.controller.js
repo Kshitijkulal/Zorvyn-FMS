@@ -2,6 +2,13 @@ import * as userService from "./user.service.js"
 import { asyncHandler } from "../../utils/asyncHandler.js"
 import { sendResponse } from "../../utils/apiResponse.js"
 
+
+export const createUser = asyncHandler(async (req, res) => {
+  const user = await userService.createUser(req.body)
+
+  sendResponse(res, 201, "User created successfully", user)
+})
+
 // 🔹 GET USERS
 export const getUsers = asyncHandler(async (req, res) => {
   const users = await userService.getAllUsers()
@@ -54,4 +61,30 @@ export const updateUser = asyncHandler(async (req, res) => {
   )
 
   sendResponse(res, 200, "User updated successfully", user)
+})
+
+export const updateUserEmail = asyncHandler(async (req, res) => {
+  const user = await userService.updateUserEmail(
+    req.params.id,
+    req.body,
+    req.user.userId
+  )
+
+  sendResponse(res, 200, "User updated successfully", user)
+})
+
+export const requestEmailChange = asyncHandler(async (req, res) => {
+  await userService.requestEmailChange(req.user, req.body.newEmail)
+
+  sendResponse(res, 200, "OTP sent to new email")
+})
+
+export const verifyEmailChange = asyncHandler(async (req, res) => {
+  await userService.verifyEmailChange(
+    req.user,
+    req.body.newEmail,
+    req.body.otp
+  )
+
+  sendResponse(res, 200, "Email updated successfully")
 })
