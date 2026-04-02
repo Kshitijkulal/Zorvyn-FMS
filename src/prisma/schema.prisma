@@ -11,18 +11,21 @@ datasource db {
 // ENUMS
 //////////////////////
 
+// Defines user access levels across the system
 enum Role {
   VIEWER
   ANALYST
   ADMIN
 }
 
+// Represents lifecycle state of a user account
 enum Status {
   ACTIVE
   INACTIVE
   SUSPENDED
 }
 
+// Type of financial record
 enum RecordType {
   INCOME
   EXPENSE
@@ -34,6 +37,7 @@ enum RecordType {
 
 model User {
   id          String   @id @default(auto()) @map("_id") @db.ObjectId
+
   email       String   @unique
   password    String
   name        String?
@@ -42,11 +46,14 @@ model User {
   status      Status   @default(ACTIVE)
 
   lastLoginAt DateTime?
+
   createdAt   DateTime @default(now())
   updatedAt   DateTime @updatedAt
 
+  // Relations
   records     Record[]
 
+  // Indexes for filtering/admin queries
   @@index([role])
   @@index([status])
 }
@@ -65,7 +72,7 @@ model Record {
 
   notes       String?
 
-  // Soft delete + audit
+  // Soft delete (used instead of hard delete to preserve financial history)
   isDeleted   Boolean  @default(false)
   deletedAt   DateTime?
 
@@ -76,28 +83,42 @@ model Record {
   createdBy   String   @db.ObjectId
   createdUser User     @relation(fields: [createdBy], references: [id])
 
+  //////////////////////
+  // INDEXES (IMPORTANT)
+  //////////////////////
+
+  // Basic filters
   @@index([type])
   @@index([category])
   @@index([date])
   @@index([createdBy])
+
+  // Frequently used in queries (VERY IMPORTANT)
+  @@index([isDeleted])
+  @@index([type, date])
+  @@index([category, date])
 }
 
 //////////////////////
-// Audit log for tracking user actions and changes to records. This is crucial for security, compliance, and debugging purposes.
+// AUDIT LOG
 //////////////////////
 
+// Tracks system actions for debugging, traceability, and security auditing
 model AuditLog {
   id          String   @id @default(auto()) @map("_id") @db.ObjectId
 
   userId      String?  @db.ObjectId
-  action      String   // CREATE_RECORD, DELETE_USER, etc
-  entity      String   // "Record", "User"
-  entityId    String?  // affected record id
 
-  metadata    Json?    // flexible details
+  action      String   // e.g. CREATE_RECORD, UPDATE_USER
+  entity      String   // e.g. "Record", "User"
+  entityId    String?  // affected entity ID
+
+  metadata    Json?    // flexible payload for debugging / traceability
 
   createdAt   DateTime @default(now())
 
+  // Indexes for audit queries
   @@index([userId])
   @@index([entity])
+  @@index([createdAt])
 }

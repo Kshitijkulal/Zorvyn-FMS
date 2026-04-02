@@ -1,10 +1,11 @@
 import prisma from "../../prisma/client.js"
 
-// 🔹 Shared filter builder (pure)
+//////////////////////
+// 🔹 FILTER BUILDER
+//////////////////////
+
 const buildWhereClause = ({ startDate, endDate, type }) => {
-  const where = {
-    isDeleted: false
-  }
+  const where = { isDeleted: false }
 
   if (type) where.type = type
 
@@ -17,7 +18,10 @@ const buildWhereClause = ({ startDate, endDate, type }) => {
   return where
 }
 
-// 🔹 Core fetch
+//////////////////////
+// 🔹 CORE FETCH
+//////////////////////
+
 const getFilteredRecords = async (query) => {
   const where = buildWhereClause(query)
 
@@ -27,8 +31,11 @@ const getFilteredRecords = async (query) => {
   })
 }
 
+//////////////////////
 // 🔹 SUMMARY
-export const getSummary = async (query) => {
+//////////////////////
+
+export const getSummary = async (query = {}) => {
   const records = await getFilteredRecords(query)
 
   let totalIncome = 0
@@ -46,8 +53,11 @@ export const getSummary = async (query) => {
   }
 }
 
+//////////////////////
 // 🔹 CATEGORIES
-export const getCategories = async (query) => {
+//////////////////////
+
+export const getCategories = async (query = {}) => {
   const records = await getFilteredRecords(query)
 
   const buckets = {
@@ -74,8 +84,13 @@ export const getCategories = async (query) => {
   }
 }
 
+//////////////////////
 // 🔹 RECENT
-export const getRecent = async ({ limit }) => {
+//////////////////////
+
+export const getRecent = async (query = {}) => {
+  const limit = query.limit ?? 5
+
   return prisma.record.findMany({
     where: { isDeleted: false },
     orderBy: { date: "desc" },
@@ -83,8 +98,30 @@ export const getRecent = async ({ limit }) => {
   })
 }
 
+//////////////////////
+// 🔹 ISO WEEK HELPER
+//////////////////////
+
+const getISOWeek = (date) => {
+  const d = new Date(Date.UTC(date.getFullYear(), date.getMonth(), date.getDate()))
+  const dayNum = d.getUTCDay() || 7
+  d.setUTCDate(d.getUTCDate() + 4 - dayNum)
+  const yearStart = new Date(Date.UTC(d.getUTCFullYear(), 0, 1))
+  const weekNo = Math.ceil((((d - yearStart) / 86400000) + 1) / 7)
+
+  return {
+    year: d.getUTCFullYear(),
+    week: weekNo
+  }
+}
+
+//////////////////////
 // 🔹 TRENDS
-export const getTrends = async ({ interval, ...query }) => {
+//////////////////////
+
+export const getTrends = async (query = {}) => {
+  const interval = query.interval ?? "monthly" // ✅ ONLY place default exists
+
   const records = await getFilteredRecords(query)
 
   const bucket = {}
@@ -95,8 +132,8 @@ export const getTrends = async ({ interval, ...query }) => {
     let key
 
     if (interval === "weekly") {
-      const week = Math.ceil(d.getDate() / 7)
-      key = `${d.getFullYear()}-W${week}`
+      const { year, week } = getISOWeek(d)
+      key = `${year}-W${String(week).padStart(2, "0")}`
     } else {
       key = `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, "0")}`
     }
@@ -109,15 +146,20 @@ export const getTrends = async ({ interval, ...query }) => {
     else bucket[key].expense += r.amount
   }
 
-  return Object.entries(bucket).map(([period, values]) => ({
-    period,
-    income: values.income,
-    expense: values.expense
-  }))
+  return Object.entries(bucket)
+    .sort(([a], [b]) => a.localeCompare(b))
+    .map(([period, values]) => ({
+      period,
+      income: values.income,
+      expense: values.expense
+    }))
 }
 
+//////////////////////
 // 🔹 OVERVIEW
-export const getOverview = async (query) => {
+//////////////////////
+
+export const getOverview = async (query = {}) => {
   const [summary, categories, recent, trends] = await Promise.all([
     getSummary(query),
     getCategories(query),
