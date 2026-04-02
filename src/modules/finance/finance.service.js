@@ -16,17 +16,47 @@ export const createRecord = async (data, user) => {
 }
 
 // 🔹 GET (FILTER + PAGINATION + SOFT DELETE)
+// 🔹 GET (FILTER + PAGINATION + SOFT DELETE)
 export const getRecords = async (query, user) => {
-  const { type, category, startDate, endDate } = query
+  const {
+    type,
+    category,
+    startDate,
+    endDate,
+    search,
+    page = 1,
+    limit = 10
+  } = query
 
-  const page = Number(query.page) || 1
-  const limit = Number(query.limit) || 10
   const skip = (page - 1) * limit
 
   const where = {
     isDeleted: false
   }
 
+  // 🔹 SEARCH (clean integration)
+  if (search) {
+    where.AND = [
+      {
+        OR: [
+          {
+            category: {
+              contains: search,
+              mode: "insensitive"
+            }
+          },
+          {
+            notes: {
+              contains: search,
+              mode: "insensitive"
+            }
+          }
+        ]
+      }
+    ]
+  }
+
+  // 🔹 FILTERS
   if (type) where.type = type
   if (category) where.category = category
 
