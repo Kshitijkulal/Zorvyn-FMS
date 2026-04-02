@@ -7,7 +7,8 @@ import {
   updateRoleSchema,
   updateStatusSchema,
   updateUserEmailSchema,
-  updateUserSchema
+  updateUserSchema,
+  userQuerySchema
 } from "./user.validation.js"
 
 import { authenticate } from "../../middlewares/auth.middleware.js"
@@ -20,7 +21,9 @@ const router = Router()
 router.use(authenticate, checkPermission(PERMISSIONS.MANAGE_USERS))
 
 // GET /users
-router.get("/", userController.getUsers)
+router.get("/", 
+  validate(userQuerySchema),
+  userController.getUsers)
 
 router.post(
   "/",

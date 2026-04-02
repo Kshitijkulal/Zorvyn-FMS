@@ -11,7 +11,7 @@ export const createUser = asyncHandler(async (req, res) => {
 
 // 🔹 GET USERS
 export const getUsers = asyncHandler(async (req, res) => {
-  const users = await userService.getAllUsers()
+  const users = await userService.getAllUsers(req.validatedQuery)
 
   sendResponse(res, 200, "Users fetched successfully", users)
 })
