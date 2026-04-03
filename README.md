@@ -1,4 +1,4 @@
-# Finance Data Processing & Access Control Backend
+# Zorvyn Finance Engine
 
 A backend system designed to handle financial data with structured access control, flexible querying, and meaningful aggregation.
 
