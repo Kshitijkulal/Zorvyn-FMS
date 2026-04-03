@@ -83,10 +83,14 @@ npm run dev
 
 npx prisma db seed  
 
-This will:
-- clear existing data  
-- populate sample users and records  
-- make API testing easier  
+This resets the database and populates:
+
+- users across all roles  
+- sample financial records  
+
+The script clears existing data before seeding to keep test runs consistent.
+
+(It bypasses authentication and should only be used in development.)
 
 ---
 
@@ -105,6 +109,62 @@ http://localhost:8080
 - Login first to obtain a JWT token  
 - Use `Authorization: Bearer <token>` for protected routes  
 - Re-run seed if you want to reset data
+
+---
+
+## API Testing
+
+The API is designed to be explored through real usage, not just static endpoints.
+
+### Postman
+
+A Postman collection is included in the repository.
+
+---
+
+### Setup
+
+1. Import the collection  
+2. Set base URL:
+   http://localhost:8080  
+
+3. Login using seeded credentials  
+4. Copy the token and add:
+   Authorization: Bearer <token>
+
+---
+
+### Suggested Flow
+
+To understand the system properly:
+
+1. Start with authentication  
+2. Explore records:
+   - filtering
+   - search
+   - pagination  
+3. Move to dashboard:
+   - summary
+   - category breakdown
+   - trends  
+
+The APIs are intentionally composable, combining query parameters reveals most of the system’s behavior.
+
+---
+
+### Test Credentials (from seed)
+
+Role: ADMIN
+Email: admin@test.com  
+Password: password123
+
+Role: ANALYST
+Email: analyst@test.com  
+Password: password123
+
+Role: VIEWER
+Email: viewer@test.com  
+Password: password123
 
 ---
 
@@ -154,8 +214,9 @@ So instead of patching things later, the system was structured upfront around **
     ├── routes
     │   └── index.js
     └── utils
----
 ```
+---
+
 ### Entry Layer
 
 - `server.js`  
@@ -875,66 +936,6 @@ This implementation avoids those pitfalls by:
 - keeping flows explicit and controlled  
 
 It’s not overly complex - just structured enough to avoid common mistakes.
-
-## API Testing
-
-The API is designed to be explored through real usage, not just static endpoints.
-
-### Postman
-
-A Postman collection is included in the repository.
-
----
-
-### Setup
-
-1. Import the collection  
-2. Set base URL:
-   http://localhost:8080  
-
-3. Login using seeded credentials  
-4. Copy the token and add:
-   Authorization: Bearer <token>
-
----
-
-### Suggested Flow
-
-To understand the system properly:
-
-1. Start with authentication  
-2. Explore records:
-   - filtering
-   - search
-   - pagination  
-3. Move to dashboard:
-   - summary
-   - category breakdown
-   - trends  
-
-The APIs are intentionally composable, combining query parameters reveals most of the system’s behavior.
-
----
-
-### Test Credentials (from seed)
-
-Email: admin@example.com  
-Password: password123
-
----
-
-### Suggested Testing Flow
-
-If you're exploring the system for the first time:
-
-1. Run the seed script (explained below)  
-2. Login using seeded credentials  
-3. Test:
-   - records (filters + search + pagination)  
-   - dashboard (summary + trends)  
-   - user flows (if needed)  
-
-The APIs are designed to be composable, so combining query params is where most of the behavior becomes visible.
 
 ## Future Improvements
 
