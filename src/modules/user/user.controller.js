@@ -9,14 +9,14 @@ export const createUser = asyncHandler(async (req, res) => {
   sendResponse(res, 201, "User created successfully", user)
 })
 
-// 🔹 GET USERS
+//   GET USERS
 export const getUsers = asyncHandler(async (req, res) => {
   const users = await userService.getAllUsers(req.validatedQuery)
 
   sendResponse(res, 200, "Users fetched successfully", users)
 })
 
-// 🔹 GET USER BY ID
+//   GET USER BY ID
 
 export const getUserById = asyncHandler(async (req, res) => {
   const user = await userService.getUserById(req.params.id)
@@ -24,7 +24,7 @@ export const getUserById = asyncHandler(async (req, res) => {
   sendResponse(res, 200, "User fetched successfully", user)
 })
 
-// 🔹 UPDATE ROLE
+//   UPDATE ROLE
 export const updateRole = asyncHandler(async (req, res) => {
   const { id } = req.params
   const { role } = req.body
@@ -38,7 +38,7 @@ export const updateRole = asyncHandler(async (req, res) => {
   sendResponse(res, 200, "User role updated successfully", updatedUser)
 })
 
-// 🔹 UPDATE STATUS
+//   UPDATE STATUS
 export const updateStatus = asyncHandler(async (req, res) => {
   const { id } = req.params
   const { status } = req.body
@@ -52,7 +52,7 @@ export const updateStatus = asyncHandler(async (req, res) => {
   sendResponse(res, 200, "User status updated successfully", updatedUser)
 })
 
-// 🔹 UPDATE USER DETAIL S
+//   UPDATE USER DETAIL S
 
 export const updateUser = asyncHandler(async (req, res) => {
   const user = await userService.updateUser(

@@ -1,6 +1,6 @@
 import rateLimit from "express-rate-limit"
 
-// 🔹 Global limiter
+//   Global limiter
 export const apiLimiter = rateLimit({
   windowMs: 15 * 60 * 1000, // 15 mins
   max: 100, // max requests per IP
@@ -12,7 +12,7 @@ export const apiLimiter = rateLimit({
   }
 })
 
-// 🔹 Strict limiter (for auth)
+//   Strict limiter (for auth)
 export const authLimiter = rateLimit({
   windowMs: 15 * 60 * 1000,
   max: 10,

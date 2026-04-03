@@ -40,7 +40,7 @@ export const createUser = async (data) => {
   return user
 }
 
-// 🔹 GET ALL USERS (ADMIN)
+//   GET ALL USERS (ADMIN)
 export const getAllUsers = async (query) => {
   const { page, limit, search } = query
 
@@ -102,7 +102,7 @@ export const getAllUsers = async (query) => {
   }
 }
 
-// 🔹 GET USER BY ID (ADMIN)
+//   GET USER BY ID (ADMIN)
 
 export const getUserById = async (id) => {
   if (!ObjectId.isValid(id)) {
@@ -128,7 +128,7 @@ export const getUserById = async (id) => {
   return user;
 };
 
-// 🔹 UPDATE USER ROLE
+//   UPDATE USER ROLE
 export const updateUserRole = async (userId, role, currentUserId) => {
   if (!ObjectId.isValid(userId)) {
     throw new AppError("Invalid user ID", 400);
@@ -153,7 +153,7 @@ export const updateUserRole = async (userId, role, currentUserId) => {
   return updatedUser;
 };
 
-// 🔹 UPDATE USER STATUS
+//   UPDATE USER STATUS
 export const updateUserStatus = async (userId, status, currentUserId) => {
   if (!ObjectId.isValid(userId)) {
     throw new AppError("Invalid user ID", 400);
@@ -178,7 +178,7 @@ export const updateUserStatus = async (userId, status, currentUserId) => {
   return updatedUser;
 };
 
-// 🔹 UPDATE USER DETAILS (NAME)
+//   UPDATE USER DETAILS (NAME)
 
 export const updateUser = async (id, data) => {
   if (!ObjectId.isValid(id)) {
