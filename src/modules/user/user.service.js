@@ -46,7 +46,7 @@ export const getAllUsers = async (query) => {
 
   const skip = (page - 1) * limit
 
-  const where = {Status: "ACTIVE"}
+  const where = {status: "ACTIVE"}
 
   if (search) {
   const upperSearch = search.toUpperCase()
