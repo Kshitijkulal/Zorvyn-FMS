@@ -91,7 +91,7 @@
 						],
 						"body": {
 							"mode": "raw",
-							"raw": "{\n    \"email\":\"kulalkshitij@gmail.com\",\n    \"otp\":\"177673\"\n}"
+							"raw": "{\n    \"email\":\"kulalkshitij@gmail.com\",\n    \"otp\":\"\"\n}"
 						},
 						"url": {
 							"raw": "{{base_url}}/api/auth/verify-otp",
@@ -580,7 +580,7 @@
 							}
 						],
 						"url": {
-							"raw": "{{base_url}}/api/dashboard/summary?type=INCOME&startDate=2026-01-01&endDate=2026-12-31",
+							"raw": "{{base_url}}/api/dashboard/summary?type=INCOME&startDate=2026-01-01&endDate=2026-03-31",
 							"host": [
 								"{{base_url}}"
 							],
@@ -600,7 +600,7 @@
 								},
 								{
 									"key": "endDate",
-									"value": "2026-12-31"
+									"value": "2026-03-31"
 								}
 							]
 						}
@@ -1277,7 +1277,7 @@
 						],
 						"body": {
 							"mode": "raw",
-							"raw": "{\"email\":\"admin@test.com\"}"
+							"raw": "{\"email\":\"test@test.com\"}"
 						},
 						"url": {
 							"raw": "{{base_url}}/api/users/{{user_id}}/email",
@@ -1348,7 +1348,7 @@
 						],
 						"body": {
 							"mode": "raw",
-							"raw": "{\n    \"newEmail\":\"kshitijkulal095@gmail.com\",\n    \"otp\":\"726022\"\n}"
+							"raw": "{\n    \"newEmail\":\"kshitijkulal095@gmail.com\",\n    \"otp\":\"\"\n}"
 						},
 						"url": {
 							"raw": "{{base_url}}/api/account/change-email/verify",
