@@ -18,11 +18,15 @@ export const authenticate = async (req, res, next) => {
     if (isBlacklisted) {
       throw new AppError("Token is invalid or expired", 401)
     }
-
+    
     // Verify token
     const decoded = jwt.verify(token, env.JWT_SECRET)
 
     req.user = decoded
+
+    if (req.user.status !== "ACTIVE") {
+  throw new AppError("Account is inactive", 403)
+  }
 
     next()
   } catch (err) {

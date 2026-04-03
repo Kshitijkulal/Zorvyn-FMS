@@ -46,14 +46,31 @@ export const getAllUsers = async (query) => {
 
   const skip = (page - 1) * limit
 
-  const where = {}
+  const where = {Status: "ACTIVE"}
 
   if (search) {
-    where.OR = [
-      { email: { contains: search, mode: "insensitive" } },
-      { name: { contains: search, mode: "insensitive" } }
-    ]
-  }
+  const upperSearch = search.toUpperCase()
+
+  where.OR = [
+    {
+      email: {
+        contains: search,
+        mode: "insensitive"
+      }
+    },
+    {
+      name: {
+        contains: search,
+        mode: "insensitive"
+      }
+    },
+    // enum match (only if valid)
+    ...( ["ADMIN", "ANALYST", "VIEWER"].includes(upperSearch)
+      ? [{ role: upperSearch }]
+      : []
+    )
+  ]
+}
 
   const [users, total] = await Promise.all([
     prisma.user.findMany({
