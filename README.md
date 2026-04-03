@@ -154,7 +154,6 @@ So instead of patching things later, the system was structured upfront around **
     ├── routes
     │   └── index.js
     └── utils
-
 ---
 
 ### Entry Layer
