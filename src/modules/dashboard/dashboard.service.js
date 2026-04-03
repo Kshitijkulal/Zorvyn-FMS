@@ -1,8 +1,7 @@
 import prisma from "../../prisma/client.js"
 
-//////////////////////
-// 🔹 FILTER BUILDER
-//////////////////////
+
+// FILTER BUILDER
 
 const buildWhereClause = ({ startDate, endDate, type }) => {
   const where = { isDeleted: false }
@@ -11,16 +10,25 @@ const buildWhereClause = ({ startDate, endDate, type }) => {
 
   if (startDate || endDate) {
     where.date = {}
-    if (startDate) where.date.gte = startDate
-    if (endDate) where.date.lte = endDate
+
+    if (startDate) {
+      where.date.gte = new Date(startDate)
+    }
+
+    if (endDate) {
+      // include full day (important)
+      const end = new Date(endDate)
+      end.setHours(23, 59, 59, 999)
+      where.date.lte = end
+    }
   }
 
   return where
 }
 
-//////////////////////
-// 🔹 CORE FETCH
-//////////////////////
+
+//  CORE FETCH
+
 
 const getFilteredRecords = async (query) => {
   const where = buildWhereClause(query)
@@ -31,9 +39,9 @@ const getFilteredRecords = async (query) => {
   })
 }
 
-//////////////////////
-// 🔹 SUMMARY
-//////////////////////
+
+//  SUMMARY
+
 
 export const getSummary = async (query = {}) => {
   const records = await getFilteredRecords(query)
@@ -53,9 +61,9 @@ export const getSummary = async (query = {}) => {
   }
 }
 
-//////////////////////
-// 🔹 CATEGORIES
-//////////////////////
+
+//  CATEGORIES
+
 
 export const getCategories = async (query = {}) => {
   const records = await getFilteredRecords(query)
@@ -84,9 +92,9 @@ export const getCategories = async (query = {}) => {
   }
 }
 
-//////////////////////
-// 🔹 RECENT
-//////////////////////
+
+//  RECENT
+
 
 export const getRecent = async (query = {}) => {
   const limit = query.limit ?? 5
@@ -98,9 +106,9 @@ export const getRecent = async (query = {}) => {
   })
 }
 
-//////////////////////
-// 🔹 ISO WEEK HELPER
-//////////////////////
+
+//  ISO WEEK HELPER
+
 
 const getISOWeek = (date) => {
   const d = new Date(Date.UTC(date.getFullYear(), date.getMonth(), date.getDate()))
@@ -115,9 +123,9 @@ const getISOWeek = (date) => {
   }
 }
 
-//////////////////////
-// 🔹 TRENDS
-//////////////////////
+
+//  TRENDS
+
 
 export const getTrends = async (query = {}) => {
   const interval = query.interval ?? "monthly" // ✅ ONLY place default exists
@@ -155,9 +163,9 @@ export const getTrends = async (query = {}) => {
     }))
 }
 
-//////////////////////
-// 🔹 OVERVIEW
-//////////////////////
+
+//  OVERVIEW
+
 
 export const getOverview = async (query = {}) => {
   const [summary, categories, recent, trends] = await Promise.all([

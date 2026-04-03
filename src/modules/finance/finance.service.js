@@ -1,22 +1,22 @@
-import prisma from "../../prisma/client.js"
-import { AppError } from "../../utils/AppError.js"
-import { ObjectId } from "mongodb"
+import prisma from "../../prisma/client.js";
+import { AppError } from "../../utils/AppError.js";
+import { ObjectId } from "mongodb";
 
-// 🔹 CREATE
+//   CREATE
 export const createRecord = async (data, user) => {
-  const { note, ...rest } = data
+  const { note, date, ...rest } = data;
 
   return prisma.record.create({
     data: {
       ...rest,
       ...(note !== undefined && { notes: note }),
-      createdBy: user.userId
-    }
-  })
-}
+      date: new Date(date), // FIX
+      createdBy: user.userId,
+    },
+  });
+};
 
-// 🔹 GET (FILTER + PAGINATION + SOFT DELETE)
-// 🔹 GET (FILTER + PAGINATION + SOFT DELETE)
+//   GET (FILTER + PAGINATION + SOFT DELETE)
 export const getRecords = async (query, user) => {
   const {
     type,
@@ -25,16 +25,16 @@ export const getRecords = async (query, user) => {
     endDate,
     search,
     page = 1,
-    limit = 10
-  } = query
+    limit = 10,
+  } = query;
 
-  const skip = (page - 1) * limit
+  const skip = (page - 1) * limit;
 
   const where = {
-    isDeleted: false
-  }
+    isDeleted: false,
+  };
 
-  // 🔹 SEARCH (clean integration)
+  //   SEARCH (clean integration)
   if (search) {
     where.AND = [
       {
@@ -42,28 +42,33 @@ export const getRecords = async (query, user) => {
           {
             category: {
               contains: search,
-              mode: "insensitive"
-            }
+              mode: "insensitive",
+            },
           },
           {
             notes: {
               contains: search,
-              mode: "insensitive"
-            }
-          }
-        ]
-      }
-    ]
+              mode: "insensitive",
+            },
+          },
+        ],
+      },
+    ];
   }
 
-  // 🔹 FILTERS
-  if (type) where.type = type
-  if (category) where.category = category
+  //   FILTERS
+  if (type) where.type = type;
+  if (category) where.category = category;
 
   if (startDate || endDate) {
-    where.date = {}
-    if (startDate) where.date.gte = startDate
-    if (endDate) where.date.lte = endDate
+    where.date = {};
+    if (startDate) where.date.gte = new Date(startDate);
+
+    if (endDate) {
+      const end = new Date(endDate);
+      end.setHours(23, 59, 59, 999);
+      where.date.lte = end;
+    }
   }
 
   const [records, total] = await Promise.all([
@@ -71,10 +76,10 @@ export const getRecords = async (query, user) => {
       where,
       skip,
       take: limit,
-      orderBy: { date: "desc" }
+      orderBy: { date: "desc" },
     }),
-    prisma.record.count({ where })
-  ])
+    prisma.record.count({ where }),
+  ]);
 
   return {
     records,
@@ -82,12 +87,12 @@ export const getRecords = async (query, user) => {
       total,
       page,
       limit,
-      totalPages: Math.ceil(total / limit)
-    }
-  }
-}
+      totalPages: Math.ceil(total / limit),
+    },
+  };
+};
 
-// 🔹 UPDATE (WITH SOFT DELETE CHECK)
+//   UPDATE (WITH SOFT DELETE CHECK)
 export const updateRecord = async (id, data) => {
   if (!ObjectId.isValid(id)) {
     throw new AppError("Invalid record ID", 400);
@@ -96,38 +101,39 @@ export const updateRecord = async (id, data) => {
   const record = await prisma.record.findUnique({ where: { id } });
 
   if (!record || record.isDeleted) {
-    throw new AppError("Record not found", 404)
+    throw new AppError("Record not found", 404);
   }
 
-  const { note, ...rest } = data
+  const { note, date, ...rest } = data;
 
   return prisma.record.update({
     where: { id },
     data: {
       ...rest,
-      ...(note !== undefined && { notes: note })
-    }
-  })
-}
+      ...(note !== undefined && { notes: note }),
+      date: new Date(date), // FIX
+    },
+  });
+};
 
-// 🔹 DELETE → SOFT DELETE
+//   DELETE → SOFT DELETE
 export const deleteRecord = async (id) => {
-    if (!ObjectId.isValid(id)) {
+  if (!ObjectId.isValid(id)) {
     throw new AppError("Invalid record ID", 400);
-}
-  const record = await prisma.record.findUnique({ where: { id } })
+  }
+  const record = await prisma.record.findUnique({ where: { id } });
 
   if (!record || record.isDeleted) {
-    throw new AppError("Record not found", 404)
+    throw new AppError("Record not found", 404);
   }
 
   await prisma.record.update({
     where: { id },
     data: {
       isDeleted: true,
-      deletedAt: new Date()
-    }
-  })
+      deletedAt: new Date(),
+    },
+  });
 
-  return { message: "Record deleted successfully" }
-}
+  return { message: "Record deleted successfully" };
+};

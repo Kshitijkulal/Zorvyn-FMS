@@ -11,7 +11,7 @@ const router = Router()
 
 router.use(authenticate)
 
-// 🔹 SUMMARY
+//  SUMMARY
 router.get(
   "/summary",
   checkPermission(PERMISSIONS.VIEW_DASHBOARD),
@@ -19,7 +19,7 @@ router.get(
   dashboardController.getSummary
 )
 
-// 🔹 CATEGORIES
+//  CATEGORIES
 router.get(
   "/categories",
   checkPermission(PERMISSIONS.VIEW_DASHBOARD),
@@ -27,7 +27,7 @@ router.get(
   dashboardController.getCategories
 )
 
-// 🔹 RECENT
+//  RECENT
 router.get(
   "/recent",
   checkPermission(PERMISSIONS.VIEW_DASHBOARD),
@@ -35,7 +35,7 @@ router.get(
   dashboardController.getRecent
 )
 
-// 🔹 TRENDS
+//  TRENDS
 router.get(
   "/trends",
   checkPermission(PERMISSIONS.VIEW_DASHBOARD),
@@ -43,7 +43,7 @@ router.get(
   dashboardController.getTrends
 )
 
-// 🔹 OVERVIEW
+//  OVERVIEW
 router.get(
   "/overview",
   checkPermission(PERMISSIONS.VIEW_DASHBOARD),

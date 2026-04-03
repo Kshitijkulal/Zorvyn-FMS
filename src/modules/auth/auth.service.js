@@ -10,7 +10,7 @@ import { AppError } from "../../utils/AppError.js"
 
 const OTP_EXPIRY = 300 // 5 minutes
 
-// 🔹 REGISTER (Step 1 - No DB write)
+// REGISTER (Step 1 - No DB write)
 export const registerUser = async (data) => {
   const { email, password, name } = data
 
@@ -36,7 +36,7 @@ export const registerUser = async (data) => {
   return { message: "OTP sent for verification" }
 }
 
-// 🔹 VERIFY OTP (Step 2 - DB write happens here)
+// VERIFY OTP (Step 2 - DB write happens here)
 export const verifyOtp = async (email, otp) => {
   const data = await redis.get(`register:${email}`)
   if (!data) throw new AppError("OTP expired", 400) // 400 Bad Request
@@ -61,7 +61,7 @@ export const verifyOtp = async (email, otp) => {
   return { message: "User verified and created successfully" }
 }
 
-// 🔹 LOGIN
+// LOGIN
 export const loginUser = async (email, password) => {
   const user = await prisma.user.findUnique({ where: { email } })
   if (!user) throw new AppError("User not found", 404) // 404 Not Found
@@ -82,7 +82,7 @@ export const loginUser = async (email, password) => {
   return { token }
 }
 
-// 🔹 FORGOT PASSWORD
+// FORGOT PASSWORD
 export const forgotPassword = async (email) => {
   const user = await prisma.user.findUnique({ where: { email } })
   if (!user) throw new AppError("User not found", 404) // 404 Not Found
@@ -104,7 +104,7 @@ export const forgotPassword = async (email) => {
   return { message: "OTP sent for password reset" }
 }
 
-// 🔹 RESET PASSWORD
+// RESET PASSWORD
 export const resetPassword = async (email, otp, newPassword) => {
   const data = await redis.get(`reset:${email}`)
   if (!data) throw new AppError("Invalid or expired OTP", 400) // 400 Bad Request

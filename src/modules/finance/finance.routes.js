@@ -14,7 +14,7 @@ import { PERMISSIONS } from "../../constants/permissions.js"
 
 const router = Router()
 
-// 🔹 CREATE
+// CREATE
 router.post(
   "/",
   authenticate,
@@ -23,7 +23,7 @@ router.post(
   financeController.createRecord
 )
 
-// 🔹 GET (FILTERED + PAGINATED)
+//   GET (FILTERED + PAGINATED)
 router.get(
   "/",
   authenticate,
@@ -32,7 +32,7 @@ router.get(
   financeController.getRecords
 )
 
-// 🔹 UPDATE
+//   UPDATE
 router.patch(
   "/:id",
   authenticate,
@@ -41,7 +41,7 @@ router.patch(
   financeController.updateRecord
 )
 
-// 🔹 DELETE (SOFT DELETE)
+//   DELETE (SOFT DELETE)
 router.delete(
   "/:id",
   authenticate,

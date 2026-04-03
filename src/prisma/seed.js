@@ -4,12 +4,12 @@ import prisma from "./client.js"
 const seed = async () => {
   console.log("Seeding started...")
 
-  // 🔹 Clean DB (careful in real world)
+  //   Clean DB (careful in real world)
   await prisma.auditLog.deleteMany()
   await prisma.record.deleteMany()
   await prisma.user.deleteMany()
 
-  // 🔹 Create Users
+  //   Create Users
   const password = await bcrypt.hash("password123", 10)
 
   const admin = await prisma.user.create({
@@ -41,7 +41,7 @@ const seed = async () => {
 
   console.log("Users created")
 
-  // 🔹 Helper for random data
+  //   Helper for random data
   const categoriesIncome = ["Salary", "Freelance", "Investments"]
   const categoriesExpense = ["Food", "Travel", "Shopping", "Bills"]
 
@@ -49,7 +49,7 @@ const seed = async () => {
 
   const records = []
 
-  // 🔹 Generate 30–50 records across 3 months
+  //   Generate 30–50 records across 3 months
   for (let i = 0; i < 40; i++) {
     const isIncome = Math.random() > 0.4
 
