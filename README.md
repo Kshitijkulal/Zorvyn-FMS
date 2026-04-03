@@ -137,7 +137,7 @@ So instead of patching things later, the system was structured upfront around **
 ---
 
 ### High-Level Structure
-
+```
 .
 ├── server.js
 └── src
@@ -155,7 +155,7 @@ So instead of patching things later, the system was structured upfront around **
     │   └── index.js
     └── utils
 ---
-
+```
 ### Entry Layer
 
 - `server.js`  
