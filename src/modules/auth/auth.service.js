@@ -74,7 +74,7 @@ export const loginUser = async (email, password) => {
   if (!isMatch) throw new AppError("Invalid credentials", 401) // 401 Unauthorized
 
   const token = jwt.sign(
-    { userId: user.id, role: user.role },
+    { userId: user.id, role: user.role, status: user.status },
     env.JWT_SECRET,
     { expiresIn: env.JWT_EXPIRES_IN }
   )
@@ -86,6 +86,10 @@ export const loginUser = async (email, password) => {
 export const forgotPassword = async (email) => {
   const user = await prisma.user.findUnique({ where: { email } })
   if (!user) throw new AppError("User not found", 404) // 404 Not Found
+
+    if (user.status !== "ACTIVE") {
+    throw new AppError("Account is not active or has been suspended", 403) // 403 Forbidden
+  }
 
   const otp = generateOTP()
 
