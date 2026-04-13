@@ -1,4 +1,4 @@
-#Finance Engine
+# Finance Engine
 
 A backend system designed to handle financial data with structured access control, flexible querying, and meaningful aggregation.
 
